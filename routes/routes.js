@@ -3,7 +3,8 @@ const bodyParser = require('body-parser')
 const router = express.Router();
 
 const authControllers = require('../controllers/authControllers')
-const mongoCreateUserController = require('../controllers/mongoUser')
+const mongoUserController = require('../controllers/mongoUser')
+const User = require('../database/mongo/models/user')
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -17,7 +18,8 @@ router.route('/register')
 router.route('/validateToken')
     .post(authControllers.validateToken)
     
-router.route('/create')
-    .post(mongoCreateUserController.createUser)
+router.route('/user')
+    .post(mongoUserController.createUser)
+    .get(mongoUserController.getUserById)
 
 module.exports = router

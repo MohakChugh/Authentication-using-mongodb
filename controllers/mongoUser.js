@@ -7,4 +7,11 @@ const createUser = async (req, res) => {
     res.send({ success: true, mes: 'Item Inserted'})
 }
 
+const getUserById = async (req, res) => {
+    let { userid } = req.body
+    let user = await User.findById(userid)
+    res.send(user)
+}
+
 exports.createUser = createUser
+exports.getUserById = getUserById
