@@ -13,5 +13,11 @@ const getUserById = async (req, res) => {
     res.send(user)
 }
 
+const getAllUsersAndData = async (req, res) => {
+    let users = await User.find()
+    res.send(users)
+}
+
 exports.createUser = createUser
 exports.getUserById = getUserById
+exports.getAllUsersAndData = getAllUsersAndData

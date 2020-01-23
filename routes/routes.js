@@ -22,4 +22,7 @@ router.route('/user')
     .post(mongoUserController.createUser)
     .get(mongoUserController.getUserById)
 
+router.route('/feed')
+    .get(mongoUserController.getAllUsersAndData)
+
 module.exports = router
