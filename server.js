@@ -3,7 +3,9 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 const routes = require('./routes/routes')
+const { connectDB } = require('./database/mongo/mongo')
 
+connectDB()
 const app = express()
 const port = process.env.PORT || 8080
 
