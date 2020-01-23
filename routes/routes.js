@@ -4,7 +4,6 @@ const router = express.Router();
 
 const authControllers = require('../controllers/authControllers')
 const mongoUserController = require('../controllers/mongoUser')
-const User = require('../database/mongo/models/user')
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
