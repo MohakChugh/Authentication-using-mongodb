@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 
 const config = require('../configuration/config')
-// const database = require('../database/fakedb/fakedb')
 const mongoFunctions = require('../database/db/functions/userFunctions')
 
 const saltRounds = 10
@@ -50,7 +49,6 @@ const loginUser = async (email, password) => {
 const validateToken = async (token) => {
     // Decode Jwt which contains userid
     let tokenDecoder = jwt.verify(token, config.secretKey)
-    console.log(tokenDecoder)
     // Check is userid Exists in database
     // If true return true
     // Else return False

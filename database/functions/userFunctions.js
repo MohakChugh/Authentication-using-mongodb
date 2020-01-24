@@ -9,14 +9,12 @@ const createUser = async (name, email, password) => {
 const getUserById = async (userid) => {
     let user = await User.findById(userid)
         .then(res => { return res })
-        .catch(err => { return 'User Not Found' })
-    console.log(user)
+        .catch(() => { return 'User Not Found' })
     return user
 }
 
 getAllUsersAndData = async () => {
     let users = await User.find()
-    console.log(users)
     return users
 }
 
@@ -27,15 +25,13 @@ const fetchPasswordOfUser = async (email) => {
 
 const fetchUserid = async (email) => {
     let user = await User.findOne({ email: email }).exec()
-    console.log(user._id)
     return user._id
 }
 
 const checkIfUserExists = async (userid) => {
     let user = await User.findById(userid)
-        .then(res => { return true })
-        .catch(err => { return false })
-    console.log(user)
+        .then(() => { return true })
+        .catch(() => { return false })
     return user
 }
 
