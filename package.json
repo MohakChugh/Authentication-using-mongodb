@@ -9,6 +9,7 @@
   "keywords": [
     "Templates"
   ],
+  "private": true,
   "author": "Mohak Chugh",
   "license": "MIT",
   "dependencies": {
