@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 const routes = require('./routes/routes')
-const { connectDB } = require('./database/mongo/mongo')
+const { connectDB } = require('./configuration/mongo')
 
 connectDB()
 const app = express()
