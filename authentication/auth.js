@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 
 const config = require('../configuration/config')
-const database = require('../database/fakedb/fakedb')
+// const database = require('../database/fakedb/fakedb')
+const mongoFunctions = require('../database/db/functions/userFunctions')
 
 const saltRounds = 10
 
@@ -19,21 +20,21 @@ const registerUser = async (name, email, password) => {
         })
     
     // If user email and name is vaid, Save user in database
-    return database.registerUser(name, email, password)
+    return mongoFunctions.createUser(name, email, password)
 }
 
 const loginUser = async (email, password) => {
     // Fetch password hash from database
-    let hashPasswordFromDatabase = database.getHashedPassword()
+    let hashPasswordFromDatabase = await mongoFunctions.fetchPasswordOfUser(email)
 
     // Compare user entered password with hashed password in database
     return await bcrypt.compare(password, hashPasswordFromDatabase)
-        .then(result => {
+        .then(async result => {
             // If password matched
             if (result === true) {
                 // Generate token
                 // Fetch userid from database using email
-                let userid = database.user.userid
+                let userid = await mongoFunctions.fetchUserid(email)
                 return jwt.sign({ userid }, config.secretKey , { expiresIn: '7 days' })
             } else {
                 console.log('User Not Found')
@@ -49,10 +50,11 @@ const loginUser = async (email, password) => {
 const validateToken = async (token) => {
     // Decode Jwt which contains userid
     let tokenDecoder = jwt.verify(token, config.secretKey)
+    console.log(tokenDecoder)
     // Check is userid Exists in database
     // If true return true
     // Else return False
-    return database.checkIfUserExists(tokenDecoder.userid)
+    return await mongoFunctions.checkIfUserExists(tokenDecoder.userid)
 }
 
 exports.registerUser = registerUser
