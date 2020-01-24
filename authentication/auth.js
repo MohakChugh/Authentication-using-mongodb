@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const validator = require('validator')
 
 const config = require('../configuration/config')
-const mongoFunctions = require('../database/db/functions/userFunctions')
+const mongoFunctions = require('../database/functions/userFunctions')
 
 const saltRounds = 10
 
