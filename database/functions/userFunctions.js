@@ -19,8 +19,19 @@ getAllUsersAndData = async () => {
 }
 
 const fetchPasswordOfUser = async (email) => {
-    let user = await User.findOne({ email: email }).exec()
-    return user.password
+    try {
+        let user = await User.findOne({ email: email }).exec()
+        if (user == null) {
+            // User does not exists
+            return false
+        }
+        console.log(`USER: ${user}`)
+        return user.password
+    } catch (err) {
+        console.log(err)
+        return err
+    }
+    
 }
 
 const fetchUserid = async (email) => {

@@ -11,48 +11,74 @@ const registerUser = async (name, email, password) => {
     if (!validator.isEmail(email)) {
         return false;
     }
-
-    // Encrypt Password
-    await bcrypt.hash(password, saltRounds)
-        .then(hash => {
-            password = hash
-        })
-    
-    // If user email and name is vaid, Save user in database
-    return mongoFunctions.createUser(name, email, password)
+    try {
+        // Encrypt Password
+        await bcrypt.hash(password, saltRounds)
+            .then(hash => {
+                password = hash
+            })
+        // If user email and name is vaid, Save user in database
+        if (!!mongoFunctions.createUser(name, email, password)) {
+            return true
+        }
+    } catch (err) {
+        console.log(err)
+        return err
+    }
 }
 
 const loginUser = async (email, password) => {
-    // Fetch password hash from database
-    let hashPasswordFromDatabase = await mongoFunctions.fetchPasswordOfUser(email)
+    try {
+        // Fetch password hash from database
+        let hashPasswordFromDatabase = await mongoFunctions.fetchPasswordOfUser(email)
+        console.log(`hashPasswordFromDatabase : ${hashPasswordFromDatabase}`);
+        if (hashPasswordFromDatabase == false) {
+            return false;
+        }
+        // Compare user entered password with hashed password in database
+        return await bcrypt.compare(password, hashPasswordFromDatabase)
+            .then(async result => {
 
-    // Compare user entered password with hashed password in database
-    return await bcrypt.compare(password, hashPasswordFromDatabase)
-        .then(async result => {
-            // If password matched
-            if (result === true) {
-                // Generate token
-                // Fetch userid from database using email
-                let userid = await mongoFunctions.fetchUserid(email)
-                return jwt.sign({ userid }, config.secretKey , { expiresIn: '7 days' })
-            } else {
-                console.log('User Not Found')
-                return false
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            return err
-        })
+                console.log(result)
+
+                // If password matched
+                if (result === true) {
+                    // Generate token
+                    // Fetch userid from database using email
+                    let userid = await mongoFunctions.fetchUserid(email)
+
+                    console.log(`userid : ${userid}`)
+
+                    return jwt.sign({ userid }, config.secretKey, { expiresIn: '7 days' })
+                } else {
+                    console.log('User Not Found')
+                    return false
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                return err
+            })
+    } catch (err) {
+        console.log(err)
+        return err
+    }
+
+
 }
 
 const validateToken = async (token) => {
-    // Decode Jwt which contains userid
-    let tokenDecoder = jwt.verify(token, config.secretKey)
-    // Check is userid Exists in database
-    // If true return true
-    // Else return False
-    return await mongoFunctions.checkIfUserExists(tokenDecoder.userid)
+    try {
+        // Decode Jwt which contains userid
+        let tokenDecoder = jwt.verify(token, config.secretKey)
+        // Check is userid Exists in database
+        // If true return true
+        // Else return False
+        return await mongoFunctions.checkIfUserExists(tokenDecoder.userid)
+    } catch (err) {
+        console.log(err)
+        return err
+    }
 }
 
 exports.registerUser = registerUser

@@ -1,15 +1,54 @@
 const authentication = require('../authentication/auth')
 
 const login = async (req, res) => {
-    let { email, password } = req.body
-    let result = await authentication.loginUser(email, password)
-    res.send(result);
+    try {
+        let { email, password } = req.body
+        let result = await authentication.loginUser(email, password)
+        if (result === false) {
+            res.json({
+                error: false,
+                success: true,
+                message: "The user is not registered! Please register and then try signing in!"
+            })
+        } else {
+            let authorizationToken = `Bearer ${result}`
+            res.json({
+                error: false,
+                success: true,
+                token: authorizationToken
+            });    
+        }
+    } catch (err) {
+        console.log(err)
+        res.json({
+            error: true,
+            success: false,
+            error: err
+        })
+    }
 }
 
 const register = async (req, res) => {
     let { email, password, name } = req.body
-    let result = await authentication.registerUser(name, email, password)
-    res.send(result)
+    if (!!email && !!password && !!name) {
+        let result = await authentication.registerUser(name, email, password)
+        if (result) {
+            res.json({
+                error: false,
+                success: true,
+                message: 'User Successfully Created!'
+            })
+        } else {            
+            res.send(result)
+        }
+    } else {
+        res.json({
+            error: true,
+            success: false,
+            message: 'Either the username, password or the email id is missing. Please check'
+        })
+    }
+    
 }
 
 const validateToken = async (req, res) => {
